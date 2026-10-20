@@ -171,6 +171,10 @@ void g3data_window_insert_image (G3dataWindow *window,
 
     gtk_container_add (GTK_CONTAINER (scrolled_window), viewport);
 
+    /* No cursor position yet: the zoom area shows only its marker
+     * until the pointer moves over the image */
+    window->x = window->y = -1;
+
     if (g3data_image_insert (window, filename, viewport, options) == 0) {
         cursor = gdk_cursor_new (GDK_CROSSHAIR);
         gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (viewport)), cursor);
