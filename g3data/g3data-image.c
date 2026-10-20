@@ -35,7 +35,6 @@ Authors email : pnovak@alumni.caltech.edu
 #define MAXPOINTS 256
 
 extern gboolean use_error;
-static GdkColor *colors;
 
 static GtkWidget *g3data_window_control_points_add (G3dataWindow *window, struct g3data_options *options);
 static GtkWidget *g3data_window_status_area_add (G3dataWindow *window);
@@ -51,8 +50,8 @@ static gint g3data_image_insert (G3dataWindow *window,
 static void SetButtonSensitivity (G3dataWindow *window);
 
 /* Callbacks */
-static gboolean image_area_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer data);
-static gboolean expose_event_callback (GtkWidget *widget, GdkEventExpose *event, gpointer data);
+static gboolean image_area_draw (GtkWidget *widget, cairo_t *cr, gpointer data);
+static gboolean zoom_area_draw (GtkWidget *widget, cairo_t *cr, gpointer data);
 static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, gpointer data);
 static void control_point_button_toggled (GtkWidget *widget, gpointer data);
 static void control_point_entry_read (GtkWidget *entry, gpointer func_data);
@@ -189,7 +188,6 @@ void g3data_window_insert_image (G3dataWindow *window,
     gtk_window_set_title (GTK_WINDOW (window), buffer);
     g_free (buffer);
 
-    setcolors (&colors);
     gtk_action_group_set_sensitive (window->action_group, TRUE);
 
     /* Allocate memory to store the point coordinates */
@@ -383,7 +381,7 @@ static GtkWidget *g3data_window_zoom_area_add (G3dataWindow *window) {
 
     window->zoom_area = gtk_drawing_area_new ();
     gtk_widget_set_size_request (window->zoom_area, ZOOMPIXSIZE, ZOOMPIXSIZE);
-    g_signal_connect (G_OBJECT (window->zoom_area), "expose_event", G_CALLBACK (expose_event_callback), (gpointer) window);
+    g_signal_connect (G_OBJECT (window->zoom_area), "draw", G_CALLBACK (zoom_area_draw), (gpointer) window);
 
     gtk_box_pack_start (GTK_BOX (vbox), window->zoom_area, FALSE, FALSE, 0);
 
@@ -534,8 +532,8 @@ static gint g3data_image_insert (G3dataWindow *window,
     g_signal_connect (G_OBJECT (window->drawing_area), "motion_notify_event",
                       G_CALLBACK (motion_notify_event), (gpointer) window);
 
-    g_signal_connect (G_OBJECT (window->drawing_area), "expose_event",
-                      G_CALLBACK (image_area_expose_event), (gpointer) window);
+    g_signal_connect (G_OBJECT (window->drawing_area), "draw",
+                      G_CALLBACK (image_area_draw), (gpointer) window);
 
     g_signal_connect (G_OBJECT (window->drawing_area), "button_press_event",
                       G_CALLBACK (button_press_event), (gpointer) window);
@@ -554,11 +552,10 @@ static gint g3data_image_insert (G3dataWindow *window,
 }
 
 
-/* Expose event callback for image area. */
-static gboolean image_area_expose_event (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
+/* Draw callback for image area. */
+static gboolean image_area_draw (GtkWidget *widget, cairo_t *cr, gpointer data) {
     gint i;
     G3dataWindow *window = G3DATA_WINDOW (data);
-    cairo_t *cr = gdk_cairo_create (gtk_widget_get_window (widget));
 
     gdk_cairo_set_source_pixbuf (cr, window->image, 0, 0);
     cairo_paint (cr);
@@ -566,30 +563,26 @@ static gboolean image_area_expose_event (GtkWidget *widget, GdkEventExpose *even
     for (i = 0; i < 4; i++) {
         if (window->control_point_image_coords[i][0] != -1 &&
             window->control_point_image_coords[i][1] != -1) {
-            DrawMarker (cr, window->control_point_image_coords[i][0], window->control_point_image_coords[i][1], i/2, colors);
+            DrawMarker (cr, window->control_point_image_coords[i][0], window->control_point_image_coords[i][1], i/2);
         }
     }
     for (i = 0; i < window->numpoints; i++) {
-        DrawMarker(cr, window->points[i][0], window->points[i][1], 2, colors);
+        DrawMarker(cr, window->points[i][0], window->points[i][1], 2);
     }
 
-    cairo_destroy (cr);
     return FALSE;
 }   
 
 
-/* Expose event callback for the zoom area. */
-static gboolean expose_event_callback (GtkWidget *widget, GdkEventExpose *event, gpointer data) {
+/* Draw callback for the zoom area. */
+static gboolean zoom_area_draw (GtkWidget *widget, cairo_t *cr, gpointer data) {
     gint x, y, width, height;
-    cairo_t *cr;
     G3dataWindow *window = G3DATA_WINDOW (data);
 
     x = window->x;
     y = window->y;
     width = gdk_pixbuf_get_width (window->image);
     height = gdk_pixbuf_get_height (window->image);
-
-    cr = gdk_cairo_create (gtk_widget_get_window (widget));
 
     if (x >= 0 && y >= 0 && x < width && y < height) {
         cairo_save(cr);
@@ -601,8 +594,7 @@ static gboolean expose_event_callback (GtkWidget *widget, GdkEventExpose *event,
     }
 
     /* Then draw the square in the middle of the zoom area */
-    DrawMarker (cr, ZOOMPIXSIZE/2, ZOOMPIXSIZE/2, 2, colors);
-    cairo_destroy (cr);
+    DrawMarker (cr, ZOOMPIXSIZE/2, ZOOMPIXSIZE/2, 2);
     return TRUE;
 }
 
@@ -879,7 +871,7 @@ static void key_press_event(GtkWidget *widget, GdkEventKey *event)
     gdouble adj_val;
 
     if (widget != NULL) {
-        if (event->keyval == GDK_Left) {
+        if (event->keyval == GDK_KEY_Left) {
             adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (widget));
             adj_val = gtk_adjustment_get_value (adjustment);
             adj_val -= gtk_adjustment_get_page_size (adjustment) / 10.0;
@@ -887,7 +879,7 @@ static void key_press_event(GtkWidget *widget, GdkEventKey *event)
                 adj_val = gtk_adjustment_get_lower (adjustment);
             gtk_adjustment_set_value (adjustment, adj_val);
             gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (widget), adjustment);
-        } else if (event->keyval == GDK_Right) {
+        } else if (event->keyval == GDK_KEY_Right) {
             adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (widget));
             adj_val = gtk_adjustment_get_value (adjustment);
             adj_val += gtk_adjustment_get_page_size (adjustment) / 10.0;
@@ -895,7 +887,7 @@ static void key_press_event(GtkWidget *widget, GdkEventKey *event)
                 adj_val = (gtk_adjustment_get_upper (adjustment) - gtk_adjustment_get_page_size (adjustment));
             gtk_adjustment_set_value (adjustment, adj_val);
             gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (widget), adjustment);
-        } else if (event->keyval == GDK_Up) {
+        } else if (event->keyval == GDK_KEY_Up) {
             adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (widget));
             adj_val = gtk_adjustment_get_value (adjustment);
             adj_val -= gtk_adjustment_get_page_size (adjustment) / 10.0;
@@ -903,7 +895,7 @@ static void key_press_event(GtkWidget *widget, GdkEventKey *event)
                 adj_val = gtk_adjustment_get_lower (adjustment);
             gtk_adjustment_set_value (adjustment, adj_val);
             gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (widget), adjustment);
-        } else if (event->keyval == GDK_Down) {
+        } else if (event->keyval == GDK_KEY_Down) {
             adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (widget));
             adj_val = gtk_adjustment_get_value (adjustment);
             adj_val += gtk_adjustment_get_page_size (adjustment) / 10.0;
