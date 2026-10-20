@@ -190,7 +190,7 @@ void g3data_window_insert_image (G3dataWindow *window,
     gtk_window_set_title (GTK_WINDOW (window), buffer);
     g_free (buffer);
 
-    gtk_action_group_set_sensitive (window->action_group, TRUE);
+    g3data_window_set_image_actions_enabled (window, TRUE);
 
     /* Allocate memory to store the point coordinates */
     window->points = (gint **) g_malloc (sizeof (gint *) * MAXPOINTS);
