@@ -185,7 +185,7 @@ static void g3data_window_file_open (GtkAction *action, G3dataWindow *window)
     gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (dialog),
                                  GTK_FILE_FILTER (filefilter));
 
-    hboxextra = gtk_hbox_new (FALSE, 0);
+    hboxextra = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 
     scalelabel = gtk_label_new (scale_string);
 
@@ -372,7 +372,7 @@ static void g3data_window_init (G3dataWindow *g3data_window)
     gtk_window_set_resizable (GTK_WINDOW (g3data_window), TRUE);
     gtk_container_set_border_width (GTK_CONTAINER (g3data_window), 0);
 
-    g3data_window->main_vbox = gtk_vbox_new (FALSE, 0);
+    g3data_window->main_vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
     gtk_container_add (GTK_CONTAINER (g3data_window), g3data_window->main_vbox);
 
     /* Create menu */
