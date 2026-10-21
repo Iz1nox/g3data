@@ -33,11 +33,18 @@ typedef enum {
     NUM_IMAGE_DATA,
 } UI_DROP_TARGET_INFO;
 
+/* GtkTargetEntry.target is a non-const gchar *, so the target names are
+ * kept in writable arrays instead of pointing at string literals */
+static gchar uri_list_target[] = "text/uri-list";
+static gchar png_target[] = "image/png";
+static gchar jpeg_target[] = "image/jpeg";
+static gchar color_target[] = "application/x-color";
+
 static const GtkTargetEntry ui_drop_target_entries[] = {
-  {"text/uri-list", 0, URI_LIST},
-  {"image/png",     0, PNG_DATA},
-  {"image/jpeg",    0, JPEG_DATA},
-  {"application/x-color",    0, APP_X_COLOR}
+  {uri_list_target, 0, URI_LIST},
+  {png_target,      0, PNG_DATA},
+  {jpeg_target,     0, JPEG_DATA},
+  {color_target,    0, APP_X_COLOR}
 };
 
 
