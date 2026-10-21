@@ -21,6 +21,7 @@ Copyright (C) 2011 Paul Novak
 Authors email : pnovak@alumni.caltech.edu
 */
 
+#include <errno.h>
 #include <stdlib.h>
 #include "g3data-application.h"
 #include "g3data-window.h"
@@ -289,6 +290,18 @@ static void g3data_window_file_save_as (GSimpleAction *action, GVariant *paramet
         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
         fp = fopen (filename, "w");
         if (fp == NULL) {
+            gint saved_errno = errno;
+
+            /* Close the file chooser, then tell the user why nothing was saved */
+            gtk_widget_destroy (dialog);
+            dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+                            GTK_DIALOG_DESTROY_WITH_PARENT,
+                            GTK_MESSAGE_ERROR,
+                            GTK_BUTTONS_CLOSE,
+                            "Error saving file '%s': %s",
+                            filename, g_strerror (saved_errno));
+            gtk_dialog_run (GTK_DIALOG (dialog));
+            gtk_widget_destroy (dialog);
             g_free (filename);
             return;
         } else {
