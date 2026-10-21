@@ -545,8 +545,7 @@ static gint g3data_image_insert (G3dataWindow *window,
     gtk_widget_set_events (window->drawing_area, GDK_EXPOSURE_MASK |
                                          GDK_BUTTON_PRESS_MASK | 
                                          GDK_BUTTON_RELEASE_MASK |
-                                         GDK_POINTER_MOTION_MASK | 
-                                         GDK_POINTER_MOTION_HINT_MASK);
+                                         GDK_POINTER_MOTION_MASK);
 
     /* Keep the image size and top-left position: a stretched drawing
      * area would accept clicks outside the image */
@@ -616,7 +615,9 @@ static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, gp
     struct PointValue CalcVal;
     G3dataWindow *window = G3DATA_WINDOW (data);
 
-    gdk_window_get_pointer (event->window, &x, &y, NULL);
+    /* Rounded like the gdk_window_get_pointer() call used before */
+    x = round (event->x);
+    y = round (event->y);
     window->x = x;
     window->y = y;
 
@@ -700,7 +701,8 @@ static void button_press_event (GtkWidget *widget, GdkEventButton *event, gpoint
     gint x, y, i, j;
     G3dataWindow *window = G3DATA_WINDOW (data);
 
-    gdk_window_get_pointer (event->window, &x, &y, NULL);
+    x = round (event->x);
+    y = round (event->y);
 
     if (event->button == 1) {
         /* If none of the control point buttons have been pressed */
