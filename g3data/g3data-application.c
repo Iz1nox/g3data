@@ -124,13 +124,13 @@ static void g3data_window_destroy_cb (GtkWidget *widget,
 }
 
 
-static void drag_data_received(GtkWidget *widget,
+static void drag_data_received(GtkWidget *widget G_GNUC_UNUSED,
                               GdkDragContext *drag_context,
-                              gint x, gint y,
+                              gint x G_GNUC_UNUSED, gint y G_GNUC_UNUSED,
                               GtkSelectionData *data,
                               guint info,
                               guint event_time,
-                              gpointer user_data)
+                              gpointer user_data G_GNUC_UNUSED)
 {
     gchar *filename;
     gchar **uri_list;

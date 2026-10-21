@@ -172,7 +172,7 @@ static void file_open_dialog_response_cb (GtkWidget *chooser,
 }
 
 
-static void g3data_window_file_open (GSimpleAction *action, GVariant *parameter, gpointer data)
+static void g3data_window_file_open (GSimpleAction *action G_GNUC_UNUSED, GVariant *parameter G_GNUC_UNUSED, gpointer data)
 {
     G3dataWindow *window = G3DATA_WINDOW (data);
     GtkWidget *dialog, *scalespinbutton, *hboxextra, *scalelabel;
@@ -271,7 +271,7 @@ static void g3data_window_print_results(FILE *fp, G3dataWindow *window)
 }
 
 
-static void g3data_window_file_save_as (GSimpleAction *action, GVariant *parameter, gpointer data)
+static void g3data_window_file_save_as (GSimpleAction *action G_GNUC_UNUSED, GVariant *parameter G_GNUC_UNUSED, gpointer data)
 {
     G3dataWindow *window = G3DATA_WINDOW (data);
     GtkWidget *dialog;
@@ -316,7 +316,7 @@ static void g3data_window_file_save_as (GSimpleAction *action, GVariant *paramet
 }
 
 
-static void g3data_window_file_close (GSimpleAction *action, GVariant *parameter, gpointer data)
+static void g3data_window_file_close (GSimpleAction *action G_GNUC_UNUSED, GVariant *parameter G_GNUC_UNUSED, gpointer data)
 {
     gtk_widget_destroy (GTK_WIDGET (data));
 }
@@ -365,7 +365,7 @@ static void sort_buttons_change_state (GSimpleAction *action, GVariant *state, g
 }
 
 
-static void g3data_window_help_about (GSimpleAction *action, GVariant *parameter, gpointer data)
+static void g3data_window_help_about (GSimpleAction *action G_GNUC_UNUSED, GVariant *parameter G_GNUC_UNUSED, gpointer data)
 {
     g3data_about (GTK_WIDGET (data));
 }
@@ -386,8 +386,8 @@ void g3data_window_set_image_actions_enabled (G3dataWindow *window, gboolean ena
 
 /* Keyboard shortcut handler: activate the window action of entry
  * number data in win_accels, if it is currently enabled. */
-static gboolean accel_activate (GtkAccelGroup *accel_group, GObject *acceleratable,
-                                guint keyval, GdkModifierType modifier, gpointer data)
+static gboolean accel_activate (GtkAccelGroup *accel_group G_GNUC_UNUSED, GObject *acceleratable,
+                                guint keyval G_GNUC_UNUSED, GdkModifierType modifier G_GNUC_UNUSED, gpointer data)
 {
     G3dataWindow *window = G3DATA_WINDOW (acceleratable);
     GActionGroup *group = G_ACTION_GROUP (window->actions);
@@ -492,7 +492,7 @@ static void g3data_window_init (G3dataWindow *g3data_window)
 }
 
 
-static void g3data_window_class_init (G3dataWindowClass *g3data_window_class)
+static void g3data_window_class_init (G3dataWindowClass *g3data_window_class G_GNUC_UNUSED)
 {
 }
 

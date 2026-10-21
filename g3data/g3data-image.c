@@ -560,7 +560,7 @@ static gint g3data_image_insert (G3dataWindow *window,
 
 
 /* Draw callback for image area. */
-static gboolean image_area_draw (GtkWidget *widget, cairo_t *cr, gpointer data) {
+static gboolean image_area_draw (GtkWidget *widget G_GNUC_UNUSED, cairo_t *cr, gpointer data) {
     gint i;
     G3dataWindow *window = G3DATA_WINDOW (data);
 
@@ -582,7 +582,7 @@ static gboolean image_area_draw (GtkWidget *widget, cairo_t *cr, gpointer data) 
 
 
 /* Draw callback for the zoom area. */
-static gboolean zoom_area_draw (GtkWidget *widget, cairo_t *cr, gpointer data) {
+static gboolean zoom_area_draw (GtkWidget *widget G_GNUC_UNUSED, cairo_t *cr, gpointer data) {
     gint x, y, width, height;
     G3dataWindow *window = G3DATA_WINDOW (data);
 
@@ -607,7 +607,7 @@ static gboolean zoom_area_draw (GtkWidget *widget, cairo_t *cr, gpointer data) {
 
 
 /* Motion notify callback, for motion over drawing_area */
-static gboolean motion_notify_event(GtkWidget *widget, GdkEventMotion *event, gpointer data) {
+static gboolean motion_notify_event(GtkWidget *widget G_GNUC_UNUSED, GdkEventMotion *event, gpointer data) {
     gboolean control_points_set = FALSE;
     gboolean islogarithmic[2];
     gint x, y, width, height;
@@ -696,7 +696,7 @@ static void control_point_entry_read (GtkWidget *entry, gpointer func_data)
 }
 
 
-static void button_press_event (GtkWidget *widget, GdkEventButton *event, gpointer data)
+static void button_press_event (GtkWidget *widget G_GNUC_UNUSED, GdkEventButton *event, gpointer data)
 {
     gint x, y, i, j;
     G3dataWindow *window = G3DATA_WINDOW (data);
@@ -810,7 +810,7 @@ static void SetButtonSensitivity (G3dataWindow *window)
 
 
 /* Removes the last data point inserted */
-static void remove_last (GtkWidget *widget, gpointer data)
+static void remove_last (GtkWidget *widget G_GNUC_UNUSED, gpointer data)
 {
     G3dataWindow *window = G3DATA_WINDOW (data);
 
