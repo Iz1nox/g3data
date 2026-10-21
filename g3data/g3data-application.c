@@ -60,6 +60,13 @@ G3dataApplication *g3data_application_get_instance (void)
 }
 
 
+/* GFunc wrapper, so gtk_widget_destroy() is not called through a cast */
+static void destroy_window (gpointer window, gpointer user_data G_GNUC_UNUSED)
+{
+    gtk_widget_destroy (GTK_WIDGET (window));
+}
+
+
 static void g3data_application_finalize (GObject *object)
 {
     G3dataApplication *application = G3DATA_APPLICATION (object);
@@ -67,7 +74,7 @@ static void g3data_application_finalize (GObject *object)
     application->current_window = NULL;
 
     g_slist_foreach (application->windows,
-                     (GFunc) gtk_widget_destroy,
+                     destroy_window,
                      NULL);
     g_slist_free (application->windows);
 
