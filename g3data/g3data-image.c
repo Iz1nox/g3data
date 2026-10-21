@@ -354,7 +354,7 @@ static GtkWidget *g3data_window_remove_buttons_add (G3dataWindow *window) {
 
     window->remove_all_button = gtk_button_new_with_mnemonic (remove_all_button_text);
     gtk_widget_set_sensitive (window->remove_all_button, FALSE);
-    gtk_widget_set_tooltip_text (window->remove_all_button, remove_last_tooltip);
+    gtk_widget_set_tooltip_text (window->remove_all_button, remove_all_tooltip);
     g_signal_connect (G_OBJECT (window->remove_all_button), "clicked",
                   G_CALLBACK (remove_all), (gpointer) window);
 
