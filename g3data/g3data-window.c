@@ -183,8 +183,8 @@ static void g3data_window_file_open (GSimpleAction *action, GVariant *parameter,
     dialog = gtk_file_chooser_dialog_new ("Open Image",
                                           GTK_WINDOW (window),
                                           GTK_FILE_CHOOSER_ACTION_OPEN,
-                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                          GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                          "_Cancel", GTK_RESPONSE_CANCEL,
+                                          "_Open", GTK_RESPONSE_ACCEPT,
                                           NULL);
 
     /* Set filtering of files to open to filetypes gdk_pixbuf can handle */
@@ -280,8 +280,8 @@ static void g3data_window_file_save_as (GSimpleAction *action, GVariant *paramet
     dialog = gtk_file_chooser_dialog_new ("Save As...",
                                           GTK_WINDOW (window),
                                           GTK_FILE_CHOOSER_ACTION_SAVE,
-                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                          GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+                                          "_Cancel", GTK_RESPONSE_CANCEL,
+                                          "_Save", GTK_RESPONSE_ACCEPT,
                                           NULL);
     gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "untitled.txt");
 
