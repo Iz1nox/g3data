@@ -176,8 +176,10 @@ void g3data_window_insert_image (G3dataWindow *window,
     window->x = window->y = -1;
 
     if (g3data_image_insert (window, filename, viewport, options) == 0) {
-        cursor = gdk_cursor_new (GDK_CROSSHAIR);
+        cursor = gdk_cursor_new_for_display (gtk_widget_get_display (viewport),
+                                             GDK_CROSSHAIR);
         gdk_window_set_cursor (gtk_widget_get_window (GTK_WIDGET (viewport)), cursor);
+        g_object_unref (cursor);
     }
 
 	g_signal_connect (G_OBJECT (scrolled_window),
